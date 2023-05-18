@@ -1,0 +1,2 @@
+npm install protobufjs@6.8.8
+npx pbjs -t static-module -w commonjs -o data_pb.js data.proto
