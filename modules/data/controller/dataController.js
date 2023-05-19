@@ -14,7 +14,8 @@ exports.createData = async (req, res, next) => {
     data.setDescription(description);
 
     // const encodedData = Data.serializeBinary(data).finish();
-    const encodedData = data.serializeBinary();
+    const encodedData = Buffer.from(data.serializeBinary());
+    console.log(encodedData)
 
     await DataModel.create({ protobufData: encodedData });
 
@@ -29,9 +30,10 @@ exports.getAllData = async (req, res, next) => {
   try {
     const documents = await DataModel.find();
 
-    const dataMessages = documents.map((document) =>
-      Data.deserializeBinary(document.protobufData)
-    );
+    const dataMessages = documents.map((document) => {
+      const data = Data.deserializeBinary(document.protobufData);
+      return data.toObject();
+    });
 
     res.status(200).json({ data: dataMessages });
   } catch (error) {
