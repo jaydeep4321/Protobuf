@@ -15,7 +15,7 @@ exports.createData = async (req, res, next) => {
 
     // const encodedData = Data.serializeBinary(data).finish();
     const encodedData = Buffer.from(data.serializeBinary());
-    console.log(encodedData)
+    console.log(encodedData);
 
     await DataModel.create({ protobufData: encodedData });
 
@@ -28,14 +28,45 @@ exports.createData = async (req, res, next) => {
 
 exports.getAllData = async (req, res, next) => {
   try {
-    const documents = await DataModel.find();
+    let documents = await DataModel.find();
+
+    // const dataMessages = documents.map((document) => {
+    //   const data = Data.deserializeBinary(document.protobufData);
+    //   return data.toObject();
+    // });
+    // documents = [JSON.stringify(documents)];
+    // console.log(documents);
+    // documents = documents.toJSON();
 
     const dataMessages = documents.map((document) => {
-      const data = Data.deserializeBinary(document.protobufData);
-      return data.toObject();
+      const data = new proto.Data();
+      data.setName(document.name);
+      data.setAge(document.age);
+      data.setDescription(document.description);
+
+      // console.log(data);
+      return data;
     });
 
-    res.status(200).json({ data: dataMessages });
+    // documents = documents.toJSON();
+    // console.log(documents);
+    // const data = new Data();
+
+    // data.setName(documents.name);
+    // data.setAge(documents.age);
+    // data.setDescription(documents.description);
+
+    // console.log(dataMessages);
+
+    const allData = new proto.AllData();
+    allData.setAlldataList(dataMessages);
+    const encodeData = allData.serializeBinary();
+    console.log(encodeData);
+
+    const decodeData = proto.AllData.deserializeBinary(encodeData);
+    console.log(decodeData.toObject());
+
+    res.status(200).json({ data: encodeData });
   } catch (error) {
     console.error("Error fetching data:", error);
     res.status(500).json({ message: "An error occurred while fetching data" });
