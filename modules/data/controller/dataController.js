@@ -28,7 +28,7 @@ exports.getAllData = async (req, res, next) => {
     const decodeData = proto.AllData.deserializeBinary(encodeData);
     console.log(decodeData.toObject());
 
-    res.status(200).json({ data: encodeData });
+    res.status(200).send(encodeData);
   } catch (error) {
     console.error("Error fetching data:", error);
     res.status(500).json({ message: "An error occurred while fetching data" });
