@@ -1,5 +1,5 @@
 const { Data } = require("../../../data_pb");
-const DataModel = require("../model/dataModel");
+const dataModel = require("../model/dataModel");
 
 exports.createData = async (req, res, next) => {
   try {
@@ -15,7 +15,7 @@ exports.createData = async (req, res, next) => {
 
     // const encodedData = Data.serializeBinary(data).finish();
     const encodedData = Buffer.from(data.serializeBinary());
-    console.log(encodedData)
+    console.log(encodedData);
 
     await DataModel.create({ protobufData: encodedData });
 
@@ -26,12 +26,10 @@ exports.createData = async (req, res, next) => {
   }
 };
 
-
 // exports.getAllData = async (req, res, next) => {
 //   try {
 //     const documents = await DataModel.find();
 //     console.log(documents);
-
 
 //     const dataMessages = documents.map((document) => {
 //       const data = new proto.Data();
@@ -59,11 +57,9 @@ exports.createData = async (req, res, next) => {
 //   }
 // };
 
-
-
 exports.getAllData = async (req, res, next) => {
   try {
-    let documents = await DataModel.find();
+    let documents = await dataModel.find();
 
     const dataMessages = documents.map((document) => {
       // console.log(document._id.toString())
@@ -78,12 +74,12 @@ exports.getAllData = async (req, res, next) => {
       return data;
     });
 
-    console.log(dataMessages)
+    // console.log(dataMessages)
 
     const allData = new proto.AllData();
     allData.setAlldataList(dataMessages);
     const encodeData = allData.serializeBinary();
-    console.log(encodeData);
+    console.log("serializeData===>", encodeData);
 
     const decodeData = proto.AllData.deserializeBinary(encodeData);
     console.log(decodeData.toObject());
@@ -95,13 +91,22 @@ exports.getAllData = async (req, res, next) => {
   }
 };
 
+exports.findAll = async (req, res, next) => {
+  try {
+    let documents = await dataModel.find();
 
+    res.status(200).json({ data: documents });
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    res.status(500).json({ message: "An error occurred while fetching data" });
+  }
+};
 
 //==================== for reference =====================//
 
 // exports.getAllData = async (req, res, next) => {
 //   try {
-//     let documents = await DataModel.find();
+//     let documents = await dataModel.findOne();
 
 //     // const dataMessages = documents.map((document) => {
 //     //   const data = Data.deserializeBinary(document.protobufData);
@@ -111,32 +116,35 @@ exports.getAllData = async (req, res, next) => {
 //     // console.log(documents);
 //     // documents = documents.toJSON();
 
-//     const dataMessages = documents.map((document) => {
-//       const data = new proto.Data();
-//       data.setName(document.name);
-//       data.setAge(document.age);
-//       data.setDescription(document.description);
+//     // const dataMessages = documents.map((document) => {
+//     //   const data = new proto.Data();
+//     //   data.setName(document.name);
+//     //   data.setAge(document.age);
+//     //   data.setDescription(document.description);
 
-//       // console.log(data);
-//       return data;
-//     });
+//     //   // console.log(data);
+//     //   return data;
+//     // });
 
 //     // documents = documents.toJSON();
-//     // console.log(documents);
-//     // const data = new Data();
+//     console.log(documents);
+//     const data = new Data();
 
-//     // data.setName(documents.name);
-//     // data.setAge(documents.age);
-//     // data.setDescription(documents.description);
+//     data.setId(documents._id.toString());
+//     data.setName(documents.name);
+//     data.setAge(documents.age);
+//     data.setDescription(documents.description);
 
 //     // console.log(dataMessages);
 
-//     const allData = new proto.AllData();
-//     allData.setAlldataList(dataMessages);
-//     const encodeData = allData.serializeBinary();
+//     // const allData = new proto.AllData();
+//     // allData.setAlldataList(dataMessages);
+//     // allData.setAlldataList(data);
+//     // const encodeData = allData.serializeBinary();
+//     const encodeData = data.serializeBinary();
 //     console.log(encodeData);
 
-//     const decodeData = proto.AllData.deserializeBinary(encodeData);
+//     // const decodeData = proto.AllData.deserializeBinary(encodeData);
 //     // console.log(decodeData.toObject());
 
 //     res.status(200).json({ data: encodeData });
