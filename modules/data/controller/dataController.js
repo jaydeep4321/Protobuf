@@ -3,9 +3,19 @@ const dataModel = require("../model/dataModel");
 
 exports.createData = async (req, res, next) => {
   try {
+    console.log("post api called!!!");
     const encodedData = req.body;
 
-    const data = proto.Data.deserializeBinary(encodedData);
+    // console.log("encodedData ==>", encodedData);
+    let binaryMessage = Object.values(encodedData);
+    // binaryMessage = new Uint8Array(binaryMessage);
+    binaryMessage = binaryMessage[0];
+    binaryMessage = new Uint8Array(binaryMessage);
+
+    console.log("binaryMessage ==>", binaryMessage);
+    const data = proto.Data.deserializeBinary(binaryMessage);
+
+    // console.log("desrializeBinary ==>", data);
 
     const name = data.getName();
     const age = data.getAge();
@@ -17,15 +27,15 @@ exports.createData = async (req, res, next) => {
       description,
     });
 
+    // console.log(document);
+
     await document.save();
 
-    res
-      .status(201)
-      .json({
-        error: false,
-        message: "Data created successfully",
-        data: document,
-      });
+    res.status(201).json({
+      error: false,
+      message: "Data created successfully",
+      data: document,
+    });
   } catch (error) {
     console.error("Error creating data:", error);
     res
@@ -51,13 +61,28 @@ exports.getAllData = async (req, res, next) => {
       return data;
     });
 
-    // console.log(dataMessages)
+    // console.log(dataMessages);
 
     const allData = new proto.AllData();
     allData.setAlldataList(dataMessages);
-    const encodeData = allData.serializeBinary();
-    console.log("serializeData===>", encodeData);
+    let encodeData = allData.serializeBinary();
+    // console.log("serializeData===>", encodeData);
 
+    // console.log(encodeData);
+
+    // const decodeData = proto.AllData.deserializeBinary(encodeData);
+    // console.log(decodeData.toObject());
+    console.log("Befor buffer ==>", encodeData);
+
+    encodeData = Buffer.from(encodeData);
+
+    console.log("Buffer ==>", encodeData);
+
+    // encodeData = new Uint8Array(encodeData);
+
+    encodeData = Object.values(encodeData);
+
+    // console.log();
     // const decodeData = proto.AllData.deserializeBinary(encodeData);
     // console.log(decodeData.toObject());
 
@@ -76,6 +101,33 @@ exports.findAll = async (req, res, next) => {
   } catch (error) {
     console.error("Error fetching data:", error);
     res.status(500).json({ message: "An error occurred while fetching data" });
+  }
+};
+
+exports.createDataJSON = async (req, res, next) => {
+  try {
+    console.log("post api called!!!");
+
+    const document = new dataModel({
+      name: req.body.name,
+      age: req.body.age,
+      description: req.body.description,
+    });
+
+    console.log(document);
+
+    await document.save();
+
+    res.status(201).json({
+      error: false,
+      message: "Data created successfully",
+      data: document,
+    });
+  } catch (error) {
+    console.error("Error creating data:", error);
+    res
+      .status(500)
+      .json({ error: true, message: "An error occurred while creating data" });
   }
 };
 

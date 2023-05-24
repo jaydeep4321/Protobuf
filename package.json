@@ -15,6 +15,7 @@
     "express": "^4.18.2",
     "google-protobuf": "^3.21.2",
     "mongoose": "^7.1.1",
+    "morgan": "^1.10.0",
     "nodemon": "^2.0.22",
     "protobufjs": "^6.8.8"
   }

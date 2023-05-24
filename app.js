@@ -5,12 +5,15 @@ dotenv.config({ path: "./config.env" });
 const app = express();
 const dataRouter = require("./modules/data/route/dataRoute");
 const cors = require("cors");
+const morgan = require("morgan");
 
 let corsOptions = {
   // origin: "http://localhost:4200",
   origin: "*",
 };
 app.use(cors(corsOptions));
+
+app.use(morgan("dev"));
 
 app.use(express.json({ limit: "10kb" }));
 
