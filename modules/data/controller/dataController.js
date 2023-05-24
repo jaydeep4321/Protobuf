@@ -58,8 +58,8 @@ exports.getAllData = async (req, res, next) => {
     const encodeData = allData.serializeBinary();
     console.log("serializeData===>", encodeData);
 
-    const decodeData = proto.AllData.deserializeBinary(encodeData);
-    console.log(decodeData.toObject());
+    // const decodeData = proto.AllData.deserializeBinary(encodeData);
+    // console.log(decodeData.toObject());
 
     res.status(200).send(encodeData);
   } catch (error) {

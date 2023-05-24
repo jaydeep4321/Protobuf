@@ -7,7 +7,8 @@ const dataRouter = require("./modules/data/route/dataRoute");
 const cors = require("cors");
 
 let corsOptions = {
-  origin: "http://localhost:4200",
+  // origin: "http://localhost:4200",
+  origin: "*",
 };
 app.use(cors(corsOptions));
 
