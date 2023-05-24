@@ -19,13 +19,20 @@ exports.createData = async (req, res, next) => {
 
     await document.save();
 
-    res.status(201).json({error:false, message: "Data created successfully", data: document });
+    res
+      .status(201)
+      .json({
+        error: false,
+        message: "Data created successfully",
+        data: document,
+      });
   } catch (error) {
     console.error("Error creating data:", error);
-    res.status(500).json({error:true, message: "An error occurred while creating data" });
+    res
+      .status(500)
+      .json({ error: true, message: "An error occurred while creating data" });
   }
 };
-
 
 exports.getAllData = async (req, res, next) => {
   try {
