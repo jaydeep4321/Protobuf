@@ -1,6 +1,32 @@
 const { Data } = require("../../../data_pb");
 const dataModel = require("../model/dataModel");
 
+exports.createData = async (req, res, next) => {
+  try {
+    const encodedData = req.body;
+
+    const data = proto.Data.deserializeBinary(encodedData);
+
+    const name = data.getName();
+    const age = data.getAge();
+    const description = data.getDescription();
+
+    const document = new dataModel({
+      name,
+      age,
+      description,
+    });
+
+    await document.save();
+
+    res.status(201).json({error:false, message: "Data created successfully", data: document });
+  } catch (error) {
+    console.error("Error creating data:", error);
+    res.status(500).json({error:true, message: "An error occurred while creating data" });
+  }
+};
+
+
 exports.getAllData = async (req, res, next) => {
   try {
     let documents = await dataModel.find();
