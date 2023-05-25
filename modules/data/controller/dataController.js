@@ -4,16 +4,19 @@ const dataModel = require("../model/dataModel");
 exports.createData = async (req, res, next) => {
   try {
     console.log("post api called!!!");
+    console.log(req.body);
     const encodedData = req.body;
 
-    // console.log("encodedData ==>", encodedData);
+    console.log("encodedData ==>", encodedData);
     let binaryMessage = Object.values(encodedData);
     // binaryMessage = new Uint8Array(binaryMessage);
     binaryMessage = binaryMessage[0];
-    binaryMessage = new Uint8Array(binaryMessage);
+    // binaryMessage = new Uint8Array(binaryMessage);
 
-    console.log("binaryMessage ==>", binaryMessage);
+    console.log(binaryMessage);
+    // console.log("binaryMessage ==>", binaryMessage);
     const data = proto.Data.deserializeBinary(binaryMessage);
+    // const data = proto.Data.deserializeBinary(encodedData);
 
     // console.log("desrializeBinary ==>", data);
 
@@ -72,19 +75,20 @@ exports.getAllData = async (req, res, next) => {
 
     // const decodeData = proto.AllData.deserializeBinary(encodeData);
     // console.log(decodeData.toObject());
-    console.log("Befor buffer ==>", encodeData);
+    // console.log("Befor buffer ==>", encodeData);
 
-    encodeData = Buffer.from(encodeData);
+    // encodeData = Buffer.from(encodeData);
 
-    console.log("Buffer ==>", encodeData);
+    // console.log("Buffer ==>", encodeData);
 
     // encodeData = new Uint8Array(encodeData);
 
     encodeData = Object.values(encodeData);
 
     // console.log();
-    // const decodeData = proto.AllData.deserializeBinary(encodeData);
-    // console.log(decodeData.toObject());
+    const decodeData = proto.AllData.deserializeBinary(encodeData);
+    // console.log(decodeData);
+    console.log(decodeData.toObject());
 
     res.status(200).send(encodeData);
   } catch (error) {
@@ -114,7 +118,7 @@ exports.createDataJSON = async (req, res, next) => {
       description: req.body.description,
     });
 
-    console.log(document);
+    // console.log(document);
 
     await document.save();
 
